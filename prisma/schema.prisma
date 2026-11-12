@@ -1,0 +1,74 @@
+// SQLite for now. To move to PostgreSQL: change provider to "postgresql",
+// swap the driver adapter in server/db.ts, and point DATABASE_URL at Postgres.
+generator client {
+  provider = "prisma-client"
+  output   = "../server/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  /// Stored trimmed and lowercased. Uniqueness is enforced by the database.
+  email        String   @unique
+  /// argon2id hash. The plain password is never stored.
+  passwordHash String
+  /// Null until the user enters the code emailed at sign-up.
+  emailVerifiedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions         Session[]
+  resetTokens      PasswordResetToken[]
+  verificationCode EmailVerificationCode?
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  /// SHA-256 of the random token in the cookie. The raw token is never stored.
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  /// SHA-256 of the token in the emailed link.
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// Fixed-window counters for rate limiting. Times are Unix milliseconds.
+model RateLimit {
+  key         String @id
+  count       Int
+  windowStart BigInt
+}
+
+/// One live code per user; sending a new code replaces the old one.
+model EmailVerificationCode {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// HMAC-SHA256 of the 6-digit code, keyed with AUTH_SECRET.
+  codeHash   String
+  /// Expiry is enforced here, in the database, not just on screen.
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  /// Drives the server-side resend cooldown.
+  lastSentAt DateTime
+  createdAt  DateTime @default(now())
+}

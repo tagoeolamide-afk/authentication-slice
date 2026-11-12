@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign up · shrink</title>
+    <link rel="preload" href="fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-fit="signup">
+    <main class="page">
+      <div class="card card--solo">
+        <div class="card__inner">
+          <div class="card__row">
+            <div class="content">
+              <div class="brand">
+                <div class="logo" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <p class="brand__welcome">Welcome to shrink</p>
+              </div>
+
+              <div class="login">
+                <h1 class="login__title">Create Account</h1>
+
+                <form class="form" id="auth-form" data-mode="signup" novalidate>
+                  <div class="form__fields">
+                    <div class="field">
+                      <label class="field__label" for="name">Full name</label>
+                      <input
+                        class="field__input"
+                        id="name"
+                        name="name"
+                        type="text"
+                        autocomplete="off"
+                        autocapitalize="words"
+                        spellcheck="false"
+                        placeholder="Your full name"
+                        required
+                        data-rule="name"
+                        aria-describedby="name-error"
+                      />
+                      <p class="field__error" id="name-error" hidden></p>
+                    </div>
+
+                    <div class="field">
+                      <label class="field__label" for="email">Email</label>
+                      <input
+                        class="field__input"
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false"
+                        placeholder="youremail@example.com"
+                        required
+                        data-rule="email"
+                        aria-describedby="email-error"
+                      />
+                      <p class="field__error" id="email-error" hidden></p>
+                    </div>
+
+                    <div class="field">
+                      <label class="field__label" for="password">Password</label>
+                      <div class="field__control">
+                        <input
+                          class="field__input field__input--password"
+                          id="password"
+                          name="password"
+                          type="password"
+                          autocomplete="off"
+                          maxlength="128"
+                          required
+                          data-rule="newPassword"
+                          aria-describedby="password-error password-requirements"
+                        />
+                        <button
+                          class="field__toggle"
+                          type="button"
+                          aria-controls="password"
+                          aria-label="Show password"
+                          aria-pressed="false"
+                        >
+                          <svg class="icon icon--eye" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8" />
+                          </svg>
+                          <svg class="icon icon--eye-off" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M10.6 5.1A10.4 10.4 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-2.6 3.5M6.6 6.6C3.7 8.5 2 12 2 12s3.6 7 10 7c1.9 0 3.6-.6 5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="m3 3 18 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                          </svg>
+                        </button>
+                      </div>
+                      <p class="field__error" id="password-error" hidden></p>
+                      <!-- Unmet requirements, filled in by script.js while the user types -->
+                      <ul class="requirements" id="password-requirements" aria-live="polite" hidden></ul>
+                    </div>
+                  </div>
+
+                  <div class="form__actions">
+                    <button class="button" type="submit" data-label="Create account" data-pending="Creating account…">
+                      Create account
+                    </button>
+                    <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+                    <p class="form__switch">
+                      Already have an account? <a class="text-link text-link--underline" href="index.html">Log in</a>
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

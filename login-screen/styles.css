@@ -1,0 +1,797 @@
+/*
+ * Login screen — Figma "authentication login page" (node 1:9), 1440 × 1024 frame.
+ * Values are taken directly from the Figma file; layer names are noted in comments.
+ */
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Satoshi";
+  src: url("fonts/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --orange: #ff7904;
+  /* Focus highlight: a deeper shade of --orange that reaches 3:1 contrast on white (WCAG). */
+  --focus: #e06600;
+  --black: #000000;
+  --white: #ffffff;
+  --border: #e9e9e9;
+  --label: #8a8a8a;
+  --text: #3c3c3c;
+  --button-text: #f2f2f2;
+  --error: #d92d20;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: "Satoshi", sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+p,
+h1 {
+  margin: 0;
+}
+
+/*
+ * Fit-to-screen scaling.
+ * Every design measurement is written as calc(var(--u) * N), where N is the Figma value in px.
+ * --u is 1px when the window is big enough and shrinks just enough for the page to fit the
+ * window height (and width) without scrolling, so the layout keeps its proportions.
+ * Each page declares its natural size at 1x via data-fit on <body>.
+ * It never shrinks below 0.7 (small text has its own 14px floor), so on very short windows
+ * and at high browser zoom the page scrolls instead of becoming unreadable.
+ */
+body {
+  --fit-w: 544;
+  --fit-h: 760;
+  --u: clamp(0.7px, min(calc((100vh - 64px) / var(--fit-h)), calc((100vw - 32px) / var(--fit-w))), 1px);
+}
+
+body[data-fit="login"] { --fit-w: 1106; --fit-h: 727; }
+body[data-fit="signup"] { --fit-h: 858; }
+body[data-fit="forgot"] { --fit-h: 670; }
+body[data-fit="reset"] { --fit-h: 802; }
+body[data-fit="verify"] { --fit-h: 760; }
+body[data-fit="dashboard"] { --fit-w: 700; --fit-h: 100; }
+
+/* The hidden attribute must always win over component display rules. */
+[hidden] {
+  display: none !important;
+}
+
+/* Frame 1:9 — the calc(var(--u) * 684) card sits vertically centred in the calc(var(--u) * 1024) frame (calc(var(--u) * 170) top & bottom). */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* Frame 13 */
+.card {
+  width: calc(var(--u) * 1106);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--u) * 24);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--u) * 22);
+}
+
+/* Frame 12 */
+.card__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: calc(var(--u) * 10);
+}
+
+/* Frame 11 */
+.card__row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 50);
+}
+
+/* ------------------------------------------------------------ Frame 9: brand panel */
+
+.panel {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: calc(var(--u) * 10);
+  width: calc(var(--u) * 542);
+  min-height: calc(var(--u) * 614);
+  align-self: stretch;
+  padding: calc(var(--u) * 32);
+  overflow: hidden;
+  background: var(--black);
+  border-radius: calc(var(--u) * 24);
+}
+
+/* Frame 10 */
+.panel__text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(var(--u) * 12);
+}
+
+.panel__tagline {
+  width: calc(var(--u) * 454);
+  color: var(--white);
+  font-size: calc(var(--u) * 50);
+  font-weight: 700;
+  line-height: calc(var(--u) * 68);
+  letter-spacing: -1.5px;
+}
+
+/*
+ * Group 5:283 — bar pattern. Blocks are 11 × 10, radius 2, on an calc(var(--u) * 18) column / calc(var(--u) * 14) row pitch.
+ * In a calc(var(--u) * 614) panel the tallest column starts calc(var(--u) * 448) from the top and the bottom row ends calc(var(--u) * 30)
+ * from the bottom; anchoring to the bottom keeps that if the panel grows.
+ */
+.bars {
+  position: absolute;
+  left: calc(var(--u) * 14);
+  bottom: calc(var(--u) * 30);
+  display: flex;
+  align-items: flex-end;
+  gap: calc(var(--u) * 7);
+  pointer-events: none;
+}
+
+.bars__col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+}
+
+.bars__col i {
+  display: block;
+  width: calc(var(--u) * 11);
+  height: calc(var(--u) * 10);
+  background: var(--orange);
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------------ Frame 8: content */
+
+.content {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 32);
+  width: calc(var(--u) * 476);
+}
+
+/* Frame 1 */
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 23);
+  width: calc(var(--u) * 235);
+}
+
+/* logo: three nested rounded squares, calc(var(--u) * 4) orange stroke */
+.logo {
+  position: relative;
+  width: calc(var(--u) * 89);
+  height: calc(var(--u) * 87);
+}
+
+.logo span {
+  position: absolute;
+  border: calc(var(--u) * 4) solid var(--orange);
+}
+
+.logo span:nth-child(1) { left: 0;    top: 0;    width: calc(var(--u) * 89); height: calc(var(--u) * 87); border-radius: calc(var(--u) * 14); }
+.logo span:nth-child(2) { left: calc(var(--u) * 16); top: calc(var(--u) * 16); width: calc(var(--u) * 57); height: calc(var(--u) * 56); border-radius: calc(var(--u) * 8); }
+.logo span:nth-child(3) { left: calc(var(--u) * 27); top: calc(var(--u) * 26); width: calc(var(--u) * 36); height: calc(var(--u) * 35); border-radius: calc(var(--u) * 4); }
+
+.brand__welcome {
+  width: 100%;
+  font-size: calc(var(--u) * 28);
+  font-weight: 500;
+  line-height: calc(var(--u) * 38);
+}
+
+/* Frame 7 */
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 32);
+  width: 100%;
+}
+
+.login__title {
+  width: 100%;
+  font-size: calc(var(--u) * 50);
+  font-weight: 700;
+  line-height: calc(var(--u) * 68);
+}
+
+/* Frame 6 */
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 40);
+  width: 100%;
+}
+
+/* Frame 5 */
+.form__fields {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 28);
+  width: 100%;
+}
+
+/* Frames 3 & 4 */
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 16);
+  width: 100%;
+}
+
+.field__label {
+  width: 100%;
+  color: var(--label);
+  font-size: calc(var(--u) * 22);
+  font-weight: 500;
+  line-height: calc(var(--u) * 30);
+}
+
+/* Frame 2 (input) — 476 × 58 */
+.field__input {
+  display: block;
+  width: 100%;
+  height: calc(var(--u) * 58);
+  margin: 0;
+  padding: calc(var(--u) * 14);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--u) * 12);
+  color: var(--text);
+  font-family: inherit;
+  font-size: calc(var(--u) * 22);
+  font-weight: 500;
+  line-height: calc(var(--u) * 30);
+  outline: none;
+  caret-color: var(--text);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+/* Placeholder uses the field stroke colour so it reads as a hint, not a value. */
+.field__input::placeholder {
+  color: var(--border);
+  opacity: 1;
+}
+
+/* Label row: "Password" on the left, "Forgot password?" on the right. */
+.field__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--u) * 16);
+  width: 100%;
+}
+
+.field__label-row .field__label {
+  width: auto;
+}
+
+/* Wraps the password input and the show/hide button. */
+.field__control {
+  position: relative;
+  width: 100%;
+}
+
+.field__control .field__input--password {
+  padding-right: calc(var(--u) * 60);
+}
+
+/* ---------- Custom email suggestions (replaces the browser's autofill dropdown) */
+
+.suggestions {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + calc(var(--u) * 6));
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: calc(var(--u) * 6);
+  list-style: none;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--u) * 12);
+  box-shadow: 0 calc(var(--u) * 12) calc(var(--u) * 32) rgba(0, 0, 0, 0.08);
+}
+
+.suggestions__item {
+  padding: calc(var(--u) * 10) calc(var(--u) * 12);
+  border-radius: calc(var(--u) * 8);
+  color: var(--text);
+  font-size: max(14px, calc(var(--u) * 18));
+  line-height: max(18px, calc(var(--u) * 24));
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.suggestions__item strong {
+  font-weight: 700;
+}
+
+.suggestions__item:hover,
+.suggestions__item[aria-selected="true"] {
+  background: #fff3e8;
+}
+
+/* ---------- Password requirements (only unmet ones are listed) */
+
+.requirements {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 6);
+  margin: -8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.requirements li {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 8);
+  color: var(--error);
+  font-size: max(14px, calc(var(--u) * 16));
+  line-height: max(18px, calc(var(--u) * 22));
+}
+
+.requirements li::before {
+  content: "";
+  flex: none;
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 6);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.field__toggle {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--u) * 8);
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: calc(var(--u) * 44);
+  height: calc(var(--u) * 44);
+  padding: 0;
+  border: 0;
+  border-radius: calc(var(--u) * 8);
+  background: transparent;
+  color: var(--label);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.field__toggle:hover {
+  color: var(--text);
+}
+
+.field__toggle:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 0;
+}
+
+.field__toggle .icon--eye-off {
+  display: none;
+}
+
+.field__toggle[aria-pressed="true"] .icon--eye {
+  display: none;
+}
+
+.field__toggle[aria-pressed="true"] .icon--eye-off {
+  display: block;
+}
+
+/* Text links in the primary colour. */
+.text-link {
+  color: var(--orange);
+  font-size: max(14px, calc(var(--u) * 18));
+  font-weight: 500;
+  line-height: max(18px, calc(var(--u) * 24));
+  text-decoration: none;
+  border-radius: calc(var(--u) * 4);
+}
+
+.text-link:hover {
+  text-decoration: underline;
+  text-underline-offset: calc(var(--u) * 3);
+}
+
+.text-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.text-link--underline {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: calc(var(--u) * 3);
+}
+
+/* The password value renders in Satoshi Bold in the design. */
+.field__input--password {
+  font-weight: 700;
+}
+
+/*
+ * Focused state: the border and a 1px ring hugging it make a solid 2px line. The ring is a
+ * box-shadow, so the box doesn't change size. The transparent outline only appears in
+ * Windows High Contrast mode, which hides box-shadows.
+ */
+.field__input:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 1px var(--focus);
+  outline: 2px solid transparent;
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: var(--error);
+}
+
+/* A field with an error still shows focus: its red line thickens to 2px. */
+.field__input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 1px var(--error);
+}
+
+.field__hint {
+  margin-top: -8px;
+  color: var(--label);
+  font-size: max(14px, calc(var(--u) * 16));
+  line-height: max(18px, calc(var(--u) * 22));
+}
+
+/* When the hint and an error both show, keep them tight together. */
+.field__hint + .field__error:not([hidden]) {
+  margin-top: -12px;
+}
+
+.field__error {
+  margin-top: -8px;
+  color: var(--error);
+  font-size: max(14px, calc(var(--u) * 16));
+  line-height: max(18px, calc(var(--u) * 22));
+}
+
+/* Frame 2 (button) — 476 × 58 */
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: calc(var(--u) * 58);
+  padding: calc(var(--u) * 14);
+  border: 0;
+  border-radius: calc(var(--u) * 12);
+  background: var(--orange);
+  color: var(--button-text);
+  font-family: inherit;
+  font-size: calc(var(--u) * 22);
+  font-weight: 700;
+  line-height: calc(var(--u) * 30);
+  cursor: pointer;
+  transition: filter 120ms ease, transform 100ms ease;
+}
+
+.button:hover {
+  filter: brightness(0.95);
+}
+
+.button:active {
+  transform: scale(0.99);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--black);
+  outline-offset: calc(var(--u) * 3);
+}
+
+.button:disabled {
+  cursor: progress;
+  opacity: 0.8;
+}
+
+/* ---------- Loading spinner (inside any button while its request runs) */
+
+.spinner {
+  flex: none;
+  width: calc(var(--u) * 20);
+  height: calc(var(--u) * 20);
+  margin-right: calc(var(--u) * 10);
+  border: calc(var(--u) * 3) solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+}
+
+.text-button .spinner {
+  width: calc(var(--u) * 14);
+  height: calc(var(--u) * 14);
+  margin-right: calc(var(--u) * 6);
+  border-width: 2px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.button[aria-busy="true"],
+.text-button[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* A link styled as the primary button (e.g. "Back to log in"). */
+.button--link {
+  text-decoration: none;
+}
+
+/* Inline text button in the primary colour (e.g. "Resend link"). */
+.text-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--orange);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: calc(var(--u) * 3);
+  cursor: pointer;
+  border-radius: calc(var(--u) * 4);
+}
+
+.text-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.text-button:disabled {
+  color: var(--label);
+  text-decoration: none;
+  cursor: default;
+}
+
+/* Title + supporting sentence (forgot / reset pages). */
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 16);
+  width: 100%;
+}
+
+.lede {
+  max-width: calc(var(--u) * 476);
+  color: var(--text);
+  font-size: max(14px, calc(var(--u) * 20));
+  line-height: calc(var(--u) * 30);
+}
+
+.lede strong {
+  color: var(--black);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.login__title:focus {
+  outline: none;
+}
+
+/* 6-digit verification code: spaced, tabular digits. */
+.field__input--code {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4em;
+}
+
+.field__input--code::placeholder {
+  letter-spacing: 0.4em;
+}
+
+/* Form-level error from the server (e.g. wrong password, too many attempts). */
+.form__error {
+  width: 100%;
+  padding: calc(var(--u) * 14) calc(var(--u) * 16);
+  border: 1px solid #fda29b;
+  border-radius: calc(var(--u) * 12);
+  background: #fef3f2;
+  color: var(--error);
+  font-size: max(14px, calc(var(--u) * 18));
+  line-height: max(18px, calc(var(--u) * 24));
+}
+
+.form__error:focus {
+  outline: none;
+}
+
+/* Live "4:59" countdown inside the error while sign-in is locked. Fixed-width digits so it doesn't jiggle. */
+.form__countdown {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Read by screen readers, not shown on screen. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Switched off (e.g. during the sign-in lockout). */
+.field__input:disabled {
+  background: #f2f2f2;
+  color: var(--label);
+  cursor: not-allowed;
+}
+
+.field__toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.button:disabled:not([aria-busy="true"]) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Placeholder dashboard: one line of text and a button. */
+.dashboard {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 24) calc(var(--u) * 40);
+  max-width: calc(var(--u) * 900);
+}
+
+.dashboard__text {
+  font-size: calc(var(--u) * 36);
+  font-weight: 700;
+  line-height: calc(var(--u) * 48);
+  overflow-wrap: anywhere;
+}
+
+.dashboard__button {
+  width: auto;
+  padding: calc(var(--u) * 14) calc(var(--u) * 40);
+}
+
+/* Button, status line and the sign-up prompt. */
+.form__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 20);
+  width: 100%;
+}
+
+.form__status:empty {
+  display: none;
+}
+
+.form__status {
+  width: 100%;
+  color: var(--text);
+  font-size: max(14px, calc(var(--u) * 18));
+  line-height: max(18px, calc(var(--u) * 24));
+}
+
+.form__switch {
+  color: var(--label);
+  font-size: max(14px, calc(var(--u) * 18));
+  font-weight: 500;
+  line-height: max(18px, calc(var(--u) * 24));
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ Sign-up page: form on its own */
+
+/* No brand panel and no card stroke: the form sits plainly on the page. */
+.card--solo {
+  width: auto;
+  border: 0;
+}
+
+/* ------------------------------------------------------------ Smaller screens (not in Figma) */
+
+@media (max-width: 1140px) {
+  /* Brand panel hidden: the login page is as narrow as the others. */
+  body[data-fit="login"] {
+    --fit-w: 544;
+  }
+  .card {
+    width: 100%;
+    max-width: calc(var(--u) * 540);
+  }
+  .card__inner,
+  .card__row,
+  .content {
+    width: 100%;
+  }
+  .panel {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  /* Phones: 16px+ inputs stop iOS from zooming the page on focus. */
+  .field__input {
+    font-size: max(16px, calc(var(--u) * 22));
+  }
+  .card {
+    border: 0;
+    padding: 0;
+  }
+  .login__title {
+    font-size: calc(var(--u) * 38);
+    line-height: calc(var(--u) * 52);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .field__input,
+  .button {
+    transition: none;
+  }
+  .spinner {
+    animation-duration: 1.6s;
+  }
+}

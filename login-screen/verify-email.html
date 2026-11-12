@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verify your email · shrink</title>
+    <link rel="preload" href="fonts/Satoshi-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="fonts/Satoshi-Bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <!-- The server only serves this page straight after sign-up or an unverified login. -->
+  <body data-fit="verify">
+    <main class="page">
+      <div class="card card--solo">
+        <div class="card__inner">
+          <div class="card__row">
+            <div class="content">
+              <div class="brand">
+                <div class="logo" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <p class="brand__welcome">Welcome to shrink</p>
+              </div>
+
+              <div class="login" id="form-view">
+                <div class="heading">
+                  <h1 class="login__title">Verify Your Email</h1>
+                  <p class="lede">
+                    We sent a 6-digit code to <strong data-fill="pending-email"></strong>. It expires in 10 minutes.
+                  </p>
+                </div>
+
+                <form class="form" id="auth-form" data-mode="verify" novalidate>
+                  <div class="form__fields">
+                    <div class="field">
+                      <label class="field__label" for="code">Verification code</label>
+                      <input
+                        class="field__input field__input--code"
+                        id="code"
+                        name="code"
+                        type="text"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        maxlength="6"
+                        placeholder="000000"
+                        required
+                        data-rule="code"
+                        aria-describedby="code-error"
+                      />
+                      <p class="field__error" id="code-error" hidden></p>
+                    </div>
+                  </div>
+
+                  <div class="form__actions">
+                    <button class="button" type="submit" data-label="Verify email" data-pending="Verifying…">Verify email</button>
+                    <p class="form__status" id="form-status" role="status" aria-live="polite"></p>
+                    <p class="form__switch">
+                      Didn't get the code?
+                      <button
+                        class="text-button"
+                        type="button"
+                        id="resend"
+                        data-path="verify-email/resend"
+                        data-label="Resend code"
+                        data-pending="Sending…"
+                        data-sent="We've sent a new code. The previous one no longer works."
+                        data-cooldown="60"
+                      >
+                        Resend code
+                      </button>
+                    </p>
+                    <p class="form__status" id="resend-status" role="status" aria-live="polite"></p>
+                    <p class="form__switch">
+                      Wrong email?
+                      <button class="text-button" type="button" id="change-email" data-label="Use a different email" data-pending="One moment…">
+                        Use a different email
+                      </button>
+                    </p>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
